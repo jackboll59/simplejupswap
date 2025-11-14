@@ -3,7 +3,7 @@
 Dead-simple Solana Jupiter swaps and wallet utilities. This library is for people who want the easiest possible way to do a Jupiter swap and a few basic wallet ops in python. I have traded with this library for months and find that these operations are all I need.
 
 - Small, typed, synchronous API
-- Explicit inputs: you pass `rpc_url` and a `Keypair`
+- Explicit inputs: pass `rpc_url` and a `Keypair`
 
 ## Install
 
@@ -47,37 +47,37 @@ print("transfer sig:", sig2)
 ## What each function does
 
 - swap(input_mint: str, output_mint: str, amount: int, keypair: Keypair, rpc_url: str, *, slippage_bps: int = 200, skip_preflight: bool = False, max_retries: int = 3, session: Optional[requests.Session] = None, confirm_transaction: bool = False, priority: Union[str, int] = "high") -> str
-  - The main function of this library. Fetches a Jupiter swap transaction, signs with your `Keypair`, and sends it to `rpc_url`. Returns the transaction signature string.
+  - The main function of this library. Fetches a Jupiter swap transaction, signs with `Keypair`, and sends it to `rpc_url`. Returns the transaction signature string.
   - Parameters:
-    - input_mint: Token mint you are paying with (e.g. `SOL_MINT` for SOL).
-    - output_mint: Token mint you want to receive.
-    - amount: Amount of input token in its smallest units (lamports for SOL; SPL tokens use their smallest units).
-    - keypair: Sender `Keypair` used to sign the swap transaction.
-    - rpc_url: Solana RPC endpoint used to send and (optionally) confirm the transaction.
-    - slippage_bps: Slippage tolerance in basis points (200 = 2%). Lower slippage increases risk of failure, but don't set it too high. (100-300 bps is good)
-    - skip_preflight: If True, skips preflight checks. Leaving False reduces risk of simulation failures, but if you want speed, set it to True.
-    - max_retries: Retries for the RPC send. 1–3 is typical. Want speed? 1 try only.
-    - session: Optional `requests.Session` to reuse HTTP connections to Jupiter.
-    - confirm_transaction: If True, wait for the RPC to confirm the signature (finalized) and raise on failure. Slow but reliable. Want speed? set this to False, but then you won't know if your transaction landed or not. Alternate solution to transaction verification provided below.
-    - priority: Priority fee preset name (`"low"`, `"medium"`, `"high"`, `"veryHigh"`) or custom lamports as int. Default `"high"`. If int provided, priority level is auto-determined from preset ranges.
+    - **input_mint**: Token mint you are paying with (e.g. `SOL_MINT` for SOL).
+    - **output_mint**: Token mint you want to receive.
+    - **amount**: Amount of input token in its smallest units (lamports for SOL; SPL tokens use their smallest units).
+    - **keypair**: Sender `Keypair` used to sign the swap transaction.
+    - **rpc_url**: Solana RPC endpoint used to send and (optionally) confirm the transaction.
+    - **slippage_bps**: Slippage tolerance in basis points (200 = 2%). Lower slippage increases risk of failure, but don't set it too high. (100-300 bps is good)
+    - **skip_preflight**: If True, skips preflight checks. Leaving False reduces risk of simulation failures, but if you want speed, set it to True.
+    - **max_retries**: Retries for the RPC send. 1–3 is typical. Want speed? 1 try only.
+    - **session**: Optional `requests.Session` to reuse HTTP connections to Jupiter.
+    - **confirm_transaction**: If True, wait for the RPC to confirm the signature (finalized) and raise on failure. Slow but reliable. Want speed? set this to False, but then you won't know if your transaction landed or not. Alternate solution to transaction verification provided below.
+    - **priority**: Priority fee preset name (`"low"`, `"medium"`, `"high"`, `"veryHigh"`) or custom lamports as int. Default `"high"`. If int provided, priority level is auto-determined from preset ranges.
 
-- get_sol_balance(pubkey: str) -> float
-  - Returns the UI SOL balance (in SOL) for the provided public key using Jupiter’s ultra balances endpoint.
-- get_sol_balance_lamports(pubkey: str) -> int
+- get_sol_balance(**pubkey**: str) -> float
+  - Returns the UI SOL balance (in SOL) for the provided public key using Jupiter's ultra balances endpoint.
+- get_sol_balance_lamports(**pubkey**: str) -> int
   - Returns SOL balance in lamports (smallest unit).
-- get_all_token_balances(pubkey: str) -> dict
-  - Returns the raw balances payload for every token in the wallet from Jupiter’s ultra balances endpoint.
-- get_token_balance(pubkey: str, mint: str) -> int
+- get_all_token_balances(**pubkey**: str) -> dict
+  - Returns the raw balances payload for every token in the wallet from Jupiter's ultra balances endpoint.
+- get_token_balance(**pubkey**: str, **mint**: str) -> int
   - Returns the raw on-chain amount (integer, smallest units) for a specific mint. Returns 0 if the mint is not found in the wallet or if the account has zero balance. Note: 0 can mean either no account exists or the account exists with zero balance (behavior is the same).
-- get_token_price(mint: str) -> float
-  - Returns the USD price for a given token mint via Jupiter’s price API.
-- quote(input_mint: str, output_mint: str, amount: int, slippage_bps: int = 200) -> dict
+- get_token_price(**mint**: str) -> float
+  - Returns the USD price for a given token mint via Jupiter's price API.
+- quote(**input_mint**: str, **output_mint**: str, **amount**: int, **slippage_bps**: int = 200) -> dict
   - Returns a Jupiter quote for swapping `amount` of `input_mint` to `output_mint`. Uses `restrictIntermediateTokens=true` by default.
-- transfer_sol(to: str, lamports: int, keypair: Keypair, rpc_url: str) -> str
+- transfer_sol(**to**: str, **lamports**: int, **keypair**: Keypair, **rpc_url**: str) -> str
   - Sends a simple v0 SOL transfer; returns the signature.
-- close_empty_token_accounts(keypair: Keypair, rpc_url: str, batch_size: int = 10) -> list[str]
+- close_empty_token_accounts(**keypair**: Keypair, **rpc_url**: str, **batch_size**: int = 10) -> list[str]
   - Finds all SPL token accounts owned by your wallet with zero balance and closes them in batches (default 10 per tx). Closing accounts returns their rent (roughly ~$0.30 worth of SOL per account, fluctuates with rent). After doing a few swaps, call this to reclaim rent from empty token accounts.
-- load_keypair(source: Union[str, bytes, list[int], Keypair]) -> Keypair
+- load_keypair(**source**: Union[str, bytes, list[int], Keypair]) -> Keypair
   - Tiny helper that loads a `Keypair` from a path, bytes, list[int], or returns it as-is.
 
 ### swap keyword-only options
