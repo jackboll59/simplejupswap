@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "simplejupswap"
-version = "0.1.0"
+version = "0.1.1"
 description = "Simple Solana Jupiter swaps and wallet utilities."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
   "requests>=2.31",
-  "solana>=0.30,<0.32",
+  "solana>=0.3.0",
   "solders>=0.20,<1.0",
 ]
 
